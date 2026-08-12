@@ -1,0 +1,31 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release-please-action
+        uses: actions/checkout@v4
+        with:
+          repository: felixi10-org-1/release-please-action-v4.4.1
+          ref: v4.4.1
+          token: ${{ secrets.ORG1_ACTION_TOKEN }}
+          path: .github/actions/release-please-action
+
+      - name: Run release-please
+        uses: ./.github/actions/release-please-action
+        with:
+          # token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+          token: ${{ github.token }}
+          release-type: simple
+          target-branch: dev
