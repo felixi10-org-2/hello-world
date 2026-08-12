@@ -13,11 +13,19 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
     steps:
-      - uses: felixi10-org-1/release-please-action-v4.4.1@v4.4.1
+      - name: Checkout release-please-action
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+          repository: felixi10-org-1/release-please-action-v4.4.1
+          ref: v4.4.1
+          token: ${{ secrets.ORG1_ACTION_TOKEN }}
+          path: .github/actions/release-please-action
+
+      - name: Run release-please
+        uses: ./.github/actions/release-please-action
+        with:
+          # token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+          token: ${{ github.token }}
           release-type: simple
           target-branch: dev
