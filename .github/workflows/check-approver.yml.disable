@@ -1,0 +1,38 @@
+name: Verify Approver
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  check-approver:
+    # if: false # for disabling the job
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check approver is designated member
+        env:
+          APPROVER: ${{ github.event.review.user.login }}
+          ALLOWED: "alice"        # comma-separated list of allowed approvers
+        run: |
+          if [[ ",$ALLOWED," != *",$APPROVER,"* ]]; then
+            echo "❌ PR approved by unauthorized user: $APPROVER"
+            echo "Only [$ALLOWED] may approve this PR."
+            exit 1
+          fi
+          echo "✅ Approved by authorized member: $APPROVER"
+
+      - name: Report status to the PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const state = process.env.OUTCOME === 'success' ? 'success' : 'failure';
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state,
+              context: 'Designated Approver Check',
+              description: 'Verified approver identity'
+            });

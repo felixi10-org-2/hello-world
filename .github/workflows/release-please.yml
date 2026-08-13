@@ -29,3 +29,9 @@ jobs:
           token: ${{ github.token }}
           release-type: simple
           target-branch: dev
+          # uses: your-org/release-please-action@v4.4.1
+          # with:
+          #   release-type: node
+          #   token: ${{ secrets.GITHUB_TOKEN }}
+          #   github-api-url: ${{ github.api_url }}
+          #   github-graphql-url: ${{ github.graphql_url }}
